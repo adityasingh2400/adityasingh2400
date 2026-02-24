@@ -1,7 +1,7 @@
 <h1 align="center">Aditya Singh</h1>
 
 <p align="center">
-  CS @ UC Santa Barbara · Full-stack + AI · Building practical products
+  CS @ UC Santa Barbara · Building @ Ryft
 </p>
 
 <p align="center">
