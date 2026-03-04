@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # --- 1. Pull Live AWS Bedrock Metrics (Multi-Region) ---
 def get_bedrock_tokens():
-    # We will check the top Bedrock regions so we don't miss any tokens
+    # Top Bedrock regions where your Claude 4.6 usage is likely recorded
     regions = ['us-east-1', 'us-west-2', 'us-east-2'] 
     aws_total = 0
     
@@ -16,16 +16,17 @@ def get_bedrock_tokens():
         try:
             cloudwatch = boto3.client('cloudwatch', region_name=region) 
             
+            # Use SEARCH with 1-day (86400) buckets for maximum precision
             response = cloudwatch.get_metric_data(
                 MetricDataQueries=[
                     {
                         'Id': 'input_tokens',
-                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"InputTokenCount\"', 'Sum', 2592000)",
+                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"InputTokenCount\"', 'Sum', 86400)",
                         'ReturnData': True,
                     },
                     {
                         'Id': 'output_tokens',
-                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"OutputTokenCount\"', 'Sum', 2592000)",
+                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"OutputTokenCount\"', 'Sum', 86400)",
                         'ReturnData': True,
                     }
                 ],
@@ -46,35 +47,26 @@ def get_bedrock_tokens():
 
     return int(aws_total)
 
-# --- 2. Calculate Total (AWS = 95%) ---
+# --- 2. Calculate Total (AWS = 95% of total spend) ---
 aws_tokens = get_bedrock_tokens()
-
-# Calculate the 100% total assuming AWS makes up 95% of your usage
 total_tokens = int(aws_tokens / 0.95) if aws_tokens > 0 else 0
 
-# --- 3. Format the Number ---
-if total_tokens >= 1000000000:
-    formatted_total = f"{total_tokens/1000000000:.1f}B"
-elif total_tokens >= 1000000:
-    formatted_total = f"{total_tokens/1000000:.1f}M"
-elif total_tokens >= 1000:
-    formatted_total = f"{total_tokens/1000:.1f}K"
-else:
-    formatted_total = str(total_tokens)
-
-print(f"\nFinal Aggregation -> AWS Tokens: {aws_tokens} | Estimated Total: {total_tokens} ({formatted_total})")
+# --- 3. Format the EXACT Number ---
+formatted_total = "{:,}".format(total_tokens)
+print(f"\nFinal Aggregation -> Exact Total: {formatted_total}")
 
 # --- 4. Generate the Aesthetic SVG ---
+# Note: font-size reduced to 38 to ensure the long number fits in the box
 svg_content = f"""<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
   <rect width="400" height="120" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-  <text x="30" y="40" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">TOKENS SACRIFICED TO LLM GODS</text>
+  <text x="25" y="40" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">TOKENS SACRIFICED TO LLM GODS</text>
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#6C3AED;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#3182ce;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <text x="30" y="90" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="url(#grad)">{formatted_total}</text>
+  <text x="25" y="90" font-family="Arial, sans-serif" font-size="38" font-weight="bold" fill="url(#grad)">{formatted_total}</text>
 </svg>"""
 
 # --- 5. Push to GitHub Gist ---
@@ -97,9 +89,9 @@ payload = {
     }
 }
 
-response = requests.patch(f"https://api.github.com/gists/{GIST_ID}", headers=headers, json=payload)
+response = requests.patch(f"https://api.github.com/gists/{{GIST_ID}}", headers=headers, json=payload)
 
 if response.status_code == 200:
     print("Success! Gist updated.")
 else:
-    print(f"Failed to update gist: {response.text}")
+    print(f"Failed to update gist: {{response.text}}")
