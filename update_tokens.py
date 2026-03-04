@@ -3,43 +3,48 @@ import requests
 import boto3
 from datetime import datetime, timedelta
 
-# --- 1. Pull Live AWS Bedrock Metrics ---
+# --- 1. Pull Live AWS Bedrock Metrics (FIXED) ---
 def get_bedrock_tokens():
     try:
-        # Boto3 will automatically use the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from env
-        cloudwatch = boto3.client('cloudwatch', region_name='us-west-2') # Change if you use a different region (e.g., us-east-1)
+        # Claude 3 Opus is primarily accessed through us-west-2 on Bedrock
+        cloudwatch = boto3.client('cloudwatch', region_name='us-west-2') 
         
-        # CloudWatch retains metric data for up to 15 months. Let's pull the last 365 days.
         start_time = datetime.utcnow() - timedelta(days=365)
         end_time = datetime.utcnow()
         
-        aws_total = 0
+        # Using GetMetricData with a SEARCH expression to aggregate across ALL Bedrock models
+        response = cloudwatch.get_metric_data(
+            MetricDataQueries=[
+                {
+                    'Id': 'input_tokens',
+                    'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"InputTokenCount\"', 'Sum', 2592000)",
+                    'ReturnData': True,
+                },
+                {
+                    'Id': 'output_tokens',
+                    'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"OutputTokenCount\"', 'Sum', 2592000)",
+                    'ReturnData': True,
+                }
+            ],
+            StartTime=start_time,
+            EndTime=end_time,
+        )
         
-        # We need both input and output tokens
-        for metric_name in ['InputTokenCount', 'OutputTokenCount']:
-            response = cloudwatch.get_metric_statistics(
-                Namespace='AWS/Bedrock',
-                MetricName=metric_name,
-                StartTime=start_time,
-                EndTime=end_time,
-                Period=86400 * 30, # Query in 30-day buckets
-                Statistics=['Sum']
-            )
-            
-            for datapoint in response['Datapoints']:
-                aws_total += datapoint['Sum']
+        aws_total = 0
+        for result in response.get('MetricDataResults', []):
+            if result['Values']:
+                aws_total += sum(result['Values'])
                 
         return int(aws_total)
     
     except Exception as e:
         print(f"Error fetching AWS metrics: {e}")
-        # Return a fallback number if AWS credentials fail so the script doesn't completely crash
-        return 15000000 
+        return 0 
 
 # --- 2. Calculate Total (AWS = 95%) ---
 aws_tokens = get_bedrock_tokens()
 
-# If AWS is 95%, we divide by 0.95 to get the 100% total (which includes Cursor/Antigravity)
+# Calculate the 100% total assuming AWS makes up 95% of your usage
 total_tokens = int(aws_tokens / 0.95) if aws_tokens > 0 else 0
 
 # --- 3. Format the Number ---
