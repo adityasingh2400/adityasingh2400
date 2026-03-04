@@ -3,9 +3,9 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:161b22,100:0d1117&height=120&section=header" width="100%" />
 
 <div id="user-content-toc">
-  <ul align="center">
-    <summary><h1 align="center">Hi, I'm Aditya <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="35"></h1></summary>
-  </ul>
+  <ul align="center">
+    <summary><h1 align="center">Hi, I'm Aditya <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="35"></h1></summary>
+  </ul>
 </div>
 <p>Building systems that think, ship, and scale.</p>
 
@@ -13,6 +13,10 @@
 [![Ryft](https://img.shields.io/badge/SWE_Lead_@_Ryft_AI-6C3AED?style=for-the-badge&logo=lightning&logoColor=white)](https://ryft.cloud)
 
 <br>
+
+<img src="https://gist.githubusercontent.com/adityasingh2400/ff4c84a2a81573579034b9c3cc1b41cd/raw/tokens.svg" width="400" alt="Tokens Sacrificed" />
+
+<br><br>
 
 <a href="mailto:adityasingh@ucsb.edu"><img src="https://img.icons8.com/color/48/gmail-new.png" width="48" height="48" alt="Email"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="https://www.linkedin.com/in/adityasingh2400"><img src="https://img.icons8.com/color/48/linkedin.png" width="48" height="48" alt="LinkedIn"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -23,7 +27,7 @@
 
 <br>
 
-CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and a lot more, all by voice. 
+CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and a lot more, all by voice. 
 Think a 10x better Alexa that anyone can own for free.
 
 Background in robotics (co-founded a nonprofit, built competition bots, wrote CV pipelines) and ML research at Cambridge. Published at IEEE MIT URTC.
@@ -31,6 +35,7 @@ Background in robotics (co-founded a nonprofit, built competition bots, wrote CV
 Right now I'm deep into using AI to automate as much of my own life as possible and pushing agentic coding tools to their limit. Most of what I build and ship these days has an AI somewhere in the loop.
 
 <br>
+
 ## Stack
 
 <div align="center">
