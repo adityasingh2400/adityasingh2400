@@ -31,7 +31,7 @@ Background in robotics (co-founded a nonprofit, built competition bots, wrote CV
 Right now I'm deep into using AI to automate as much of my own life as possible and pushing agentic coding tools to their limit. Most of what I build and ship these days has an AI somewhere in the loop.
 
 <br>
-
+<img src="https://gist.githubusercontent.com/adityasingh2400/ff4c84a2a81573579034b9c3cc1b41cd/raw/tokens.svg" width="400" alt="Tokens Sacrificed" />
 ## Stack
 
 <div align="center">
