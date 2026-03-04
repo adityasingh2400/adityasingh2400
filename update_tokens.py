@@ -3,43 +3,48 @@ import requests
 import boto3
 from datetime import datetime, timedelta
 
-# --- 1. Pull Live AWS Bedrock Metrics (FIXED) ---
+# --- 1. Pull Live AWS Bedrock Metrics (Multi-Region) ---
 def get_bedrock_tokens():
-    try:
-        # Claude 3 Opus is primarily accessed through us-west-2 on Bedrock
-        cloudwatch = boto3.client('cloudwatch', region_name='us-east-1') 
-        
-        start_time = datetime.utcnow() - timedelta(days=365)
-        end_time = datetime.utcnow()
-        
-        # Using GetMetricData with a SEARCH expression to aggregate across ALL Bedrock models
-        response = cloudwatch.get_metric_data(
-            MetricDataQueries=[
-                {
-                    'Id': 'input_tokens',
-                    'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"InputTokenCount\"', 'Sum', 2592000)",
-                    'ReturnData': True,
-                },
-                {
-                    'Id': 'output_tokens',
-                    'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"OutputTokenCount\"', 'Sum', 2592000)",
-                    'ReturnData': True,
-                }
-            ],
-            StartTime=start_time,
-            EndTime=end_time,
-        )
-        
-        aws_total = 0
-        for result in response.get('MetricDataResults', []):
-            if result['Values']:
-                aws_total += sum(result['Values'])
-                
-        return int(aws_total)
+    # We will check the top Bedrock regions so we don't miss any tokens
+    regions = ['us-east-1', 'us-west-2', 'us-east-2'] 
+    aws_total = 0
     
-    except Exception as e:
-        print(f"Error fetching AWS metrics: {e}")
-        return 0 
+    start_time = datetime.utcnow() - timedelta(days=365)
+    end_time = datetime.utcnow()
+    
+    for region in regions:
+        try:
+            cloudwatch = boto3.client('cloudwatch', region_name=region) 
+            
+            response = cloudwatch.get_metric_data(
+                MetricDataQueries=[
+                    {
+                        'Id': 'input_tokens',
+                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"InputTokenCount\"', 'Sum', 2592000)",
+                        'ReturnData': True,
+                    },
+                    {
+                        'Id': 'output_tokens',
+                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"OutputTokenCount\"', 'Sum', 2592000)",
+                        'ReturnData': True,
+                    }
+                ],
+                StartTime=start_time,
+                EndTime=end_time,
+            )
+            
+            region_total = 0
+            for result in response.get('MetricDataResults', []):
+                if result['Values']:
+                    region_total += sum(result['Values'])
+            
+            print(f"Tokens found in {region}: {int(region_total)}")
+            aws_total += region_total
+            
+        except Exception as e:
+            print(f"Error fetching metrics from {region}: {e}")
+
+    return int(aws_total)
 
 # --- 2. Calculate Total (AWS = 95%) ---
 aws_tokens = get_bedrock_tokens()
@@ -48,14 +53,16 @@ aws_tokens = get_bedrock_tokens()
 total_tokens = int(aws_tokens / 0.95) if aws_tokens > 0 else 0
 
 # --- 3. Format the Number ---
-if total_tokens >= 1000000:
+if total_tokens >= 1000000000:
+    formatted_total = f"{total_tokens/1000000000:.1f}B"
+elif total_tokens >= 1000000:
     formatted_total = f"{total_tokens/1000000:.1f}M"
 elif total_tokens >= 1000:
     formatted_total = f"{total_tokens/1000:.1f}K"
 else:
     formatted_total = str(total_tokens)
 
-print(f"AWS Tokens: {aws_tokens} | Estimated Total: {total_tokens} ({formatted_total})")
+print(f"\nFinal Aggregation -> AWS Tokens: {aws_tokens} | Estimated Total: {total_tokens} ({formatted_total})")
 
 # --- 4. Generate the Aesthetic SVG ---
 svg_content = f"""<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
