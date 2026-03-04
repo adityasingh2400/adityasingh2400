@@ -1,0 +1,29 @@
+name: Update Token Sacrifices
+
+on:
+  schedule:
+    - cron: '0 */12 * * *' # Runs automatically every 12 hours
+  workflow_dispatch: # Adds a button so you can trigger it manually anytime
+
+jobs:
+  update-gist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: pip install requests boto3
+        
+      - name: Run Aggregator Script
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GIST_ID: ${{ secrets.GIST_ID }}
+          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  <-- Uncomment these later when you add actual Bedrock logic
+          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: python update_tokens.py
