@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # --- 1. Pull Live AWS Bedrock Metrics (Multi-Region) ---
 def get_bedrock_tokens():
-    # Top Bedrock regions where your Claude 4.6 usage is likely recorded
+    # Searching all major Bedrock regions where your specific models might be active
     regions = ['us-east-1', 'us-west-2', 'us-east-2'] 
     aws_total = 0
     
@@ -16,7 +16,7 @@ def get_bedrock_tokens():
         try:
             cloudwatch = boto3.client('cloudwatch', region_name=region) 
             
-            # Use SEARCH with 1-day (86400) buckets for maximum precision
+            # Using 1-day (86400) buckets for exact integer precision
             response = cloudwatch.get_metric_data(
                 MetricDataQueries=[
                     {
@@ -47,16 +47,16 @@ def get_bedrock_tokens():
 
     return int(aws_total)
 
-# --- 2. Calculate Total (AWS = 95% of total spend) ---
+# --- 2. Calculate Total (AWS = 95%) ---
 aws_tokens = get_bedrock_tokens()
 total_tokens = int(aws_tokens / 0.95) if aws_tokens > 0 else 0
 
-# --- 3. Format the EXACT Number ---
+# --- 3. Format the EXACT Number with Commas ---
 formatted_total = "{:,}".format(total_tokens)
 print(f"\nFinal Aggregation -> Exact Total: {formatted_total}")
 
 # --- 4. Generate the Aesthetic SVG ---
-# Note: font-size reduced to 38 to ensure the long number fits in the box
+# Card designed to fit into your UCSB/Ryft theme
 svg_content = f"""<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
   <rect width="400" height="120" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
   <text x="25" y="40" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">TOKENS SACRIFICED TO LLM GODS</text>
@@ -66,7 +66,7 @@ svg_content = f"""<svg width="400" height="120" viewBox="0 0 400 120" xmlns="htt
       <stop offset="100%" style="stop-color:#3182ce;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <text x="25" y="90" font-family="Arial, sans-serif" font-size="38" font-weight="bold" fill="url(#grad)">{formatted_total}</text>
+  <text x="25" y="90" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="url(#grad)">{formatted_total}</text>
 </svg>"""
 
 # --- 5. Push to GitHub Gist ---
@@ -89,9 +89,10 @@ payload = {
     }
 }
 
-response = requests.patch(f"https://api.github.com/gists/{{GIST_ID}}", headers=headers, json=payload)
+# Corrected: Single curly braces for variable interpolation
+response = requests.patch(f"https://api.github.com/gists/{GIST_ID}", headers=headers, json=payload)
 
 if response.status_code == 200:
-    print("Success! Gist updated.")
+    print("Success! Gist updated with the new model metrics.")
 else:
-    print(f"Failed to update gist: {{response.text}}")
+    print(f"Failed to update gist: {response.text}")
