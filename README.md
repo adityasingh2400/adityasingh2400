@@ -14,7 +14,7 @@
 
 <br>
 
-<img src="https://gist.githubusercontent.com/adityasingh2400/ff4c84a2a81573579034b9c3cc1b41cd/raw/tokens.svg" width="400" alt="Tokens Sacrificed" />
+<img src="https://gist.githubusercontent.com/adityasingh2400/ff4c84a2a81573579034b9c3cc1b41cd/raw/tokens.svg?v=3" width="400" alt="Tokens Sacrificed" />
 
 <br><br>
 
