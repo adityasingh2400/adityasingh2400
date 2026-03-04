@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 def get_bedrock_tokens():
     try:
         # Claude 3 Opus is primarily accessed through us-west-2 on Bedrock
-        cloudwatch = boto3.client('cloudwatch', region_name='us-west-2') 
+        cloudwatch = boto3.client('cloudwatch', region_name='us-east-1') 
         
         start_time = datetime.utcnow() - timedelta(days=365)
         end_time = datetime.utcnow()
