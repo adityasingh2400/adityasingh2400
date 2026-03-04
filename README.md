@@ -23,7 +23,8 @@
 
 <br>
 
-CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and a lot more, all by voice. Think a 10x better Alexa that anyone can own for free.
+CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and a lot more, all by voice. 
+Think a 10x better Alexa that anyone can own for free.
 
 Background in robotics (co-founded a nonprofit, built competition bots, wrote CV pipelines) and ML research at Cambridge. Published at IEEE MIT URTC.
 
