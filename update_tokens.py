@@ -1,62 +1,123 @@
 import os
 import requests
 import boto3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-# --- 1. Pull Live AWS Bedrock Metrics (Multi-Region) ---
-def get_bedrock_tokens():
-    # Searching all major Bedrock regions where your specific models might be active
-    regions = ['us-east-1', 'us-west-2', 'us-east-2'] 
-    aws_total = 0
-    
-    start_time = datetime.utcnow() - timedelta(days=365)
-    end_time = datetime.utcnow()
-    
-    for region in regions:
-        try:
-            cloudwatch = boto3.client('cloudwatch', region_name=region) 
-            
-            # Using 1-day (86400) buckets for exact integer precision
-            response = cloudwatch.get_metric_data(
-                MetricDataQueries=[
-                    {
-                        'Id': 'input_tokens',
-                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"InputTokenCount\"', 'Sum', 86400)",
-                        'ReturnData': True,
-                    },
-                    {
-                        'Id': 'output_tokens',
-                        'Expression': "SEARCH('{AWS/Bedrock,ModelId} MetricName=\"OutputTokenCount\"', 'Sum', 86400)",
-                        'ReturnData': True,
-                    }
-                ],
-                StartTime=start_time,
-                EndTime=end_time,
+# Configure the source regions you actually invoke Bedrock from.
+# Example:
+# BEDROCK_SOURCE_REGIONS=us-east-1,us-east-2,us-west-2
+REGIONS = [
+    r.strip()
+    for r in os.getenv("BEDROCK_SOURCE_REGIONS", "us-east-1,us-east-2,us-west-2").split(",")
+    if r.strip()
+]
+
+METRICS = [
+    ("input", "InputTokenCount"),
+    ("output", "OutputTokenCount"),
+    ("cache_read", "CacheReadInputTokens"),
+    ("cache_write", "CacheWriteInputTokens"),
+]
+
+def fetch_all_metric_pages(cloudwatch, start_time, end_time):
+    next_token = None
+    total_by_metric = {key: 0 for key, _ in METRICS}
+
+    while True:
+        queries = []
+        for i, (key, metric_name) in enumerate(METRICS):
+            queries.append(
+                {
+                    "Id": f"q{i}",
+                    "Expression": (
+                        f"SEARCH('{{AWS/Bedrock,ModelId}} "
+                        f'MetricName="{metric_name}"\', \'Sum\', 86400)'
+                    ),
+                    "ReturnData": True,
+                }
             )
-            
-            region_total = 0
-            for result in response.get('MetricDataResults', []):
-                if result['Values']:
-                    region_total += sum(result['Values'])
-            
-            print(f"Tokens found in {region}: {int(region_total)}")
-            aws_total += region_total
-            
+
+        kwargs = {
+            "MetricDataQueries": queries,
+            "StartTime": start_time,
+            "EndTime": end_time,
+            "ScanBy": "TimestampAscending",
+        }
+        if next_token:
+            kwargs["NextToken"] = next_token
+
+        response = cloudwatch.get_metric_data(**kwargs)
+
+        for result in response.get("MetricDataResults", []):
+            result_id = result.get("Id")
+            values = result.get("Values", [])
+            if not values:
+                continue
+
+            if result_id == "q0":
+                total_by_metric["input"] += sum(values)
+            elif result_id == "q1":
+                total_by_metric["output"] += sum(values)
+            elif result_id == "q2":
+                total_by_metric["cache_read"] += sum(values)
+            elif result_id == "q3":
+                total_by_metric["cache_write"] += sum(values)
+
+        next_token = response.get("NextToken")
+        if not next_token:
+            break
+
+    return total_by_metric
+
+
+def get_bedrock_tokens():
+    # 365 days is fine for now, but if you want "all-time", store a rolling total
+    # or use invocation logs as the source of truth.
+    start_time = datetime.now(timezone.utc) - timedelta(days=365)
+    end_time = datetime.now(timezone.utc)
+
+    grand_totals = {
+        "input": 0,
+        "output": 0,
+        "cache_read": 0,
+        "cache_write": 0,
+    }
+
+    for region in REGIONS:
+        try:
+            cloudwatch = boto3.client("cloudwatch", region_name=region)
+            region_totals = fetch_all_metric_pages(cloudwatch, start_time, end_time)
+
+            print(
+                f"{region} -> "
+                f"input={int(region_totals['input']):,}, "
+                f"output={int(region_totals['output']):,}, "
+                f"cache_read={int(region_totals['cache_read']):,}, "
+                f"cache_write={int(region_totals['cache_write']):,}"
+            )
+
+            for key in grand_totals:
+                grand_totals[key] += region_totals[key]
+
         except Exception as e:
             print(f"Error fetching metrics from {region}: {e}")
 
-    return int(aws_total)
+    total_processed_tokens = int(
+        grand_totals["input"]
+        + grand_totals["output"]
+        + grand_totals["cache_read"]
+        + grand_totals["cache_write"]
+    )
 
-# --- 2. Calculate Total (AWS = 95%) ---
-aws_tokens = get_bedrock_tokens()
-total_tokens = int(aws_tokens / 0.95) if aws_tokens > 0 else 0
+    return total_processed_tokens, grand_totals
 
-# --- 3. Format the EXACT Number with Commas ---
-formatted_total = "{:,}".format(total_tokens)
+
+aws_total_tokens, breakdown = get_bedrock_tokens()
+
+# Remove the fake 95% adjustment.
+formatted_total = f"{aws_total_tokens:,}"
 print(f"\nFinal Aggregation -> Exact Total: {formatted_total}")
 
-# --- 4. Generate the Aesthetic SVG ---
-# Card designed to fit into your UCSB/Ryft theme
 svg_content = f"""<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
   <rect width="400" height="120" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
   <text x="25" y="40" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">TOKENS SACRIFICED TO LLM GODS</text>
@@ -69,7 +130,6 @@ svg_content = f"""<svg width="400" height="120" viewBox="0 0 400 120" xmlns="htt
   <text x="25" y="90" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="url(#grad)">{formatted_total}</text>
 </svg>"""
 
-# --- 5. Push to GitHub Gist ---
 GIST_ID = os.environ.get("GIST_ID")
 GITHUB_TOKEN = os.environ.get("GH_PAT")
 
@@ -80,17 +140,13 @@ headers = {
     "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json",
 }
+payload = {"files": {"tokens.svg": {"content": svg_content}}}
 
-payload = {
-    "files": {
-        "tokens.svg": {
-            "content": svg_content
-        }
-    }
-}
-
-# Corrected: Single curly braces for variable interpolation
-response = requests.patch(f"https://api.github.com/gists/{GIST_ID}", headers=headers, json=payload)
+response = requests.patch(
+    f"https://api.github.com/gists/{GIST_ID}",
+    headers=headers,
+    json=payload,
+)
 
 if response.status_code == 200:
     print("Success! Gist updated with the new model metrics.")
