@@ -29,7 +29,7 @@ MODEL_IDS = [
     m.strip()
     for m in os.getenv(
         "BEDROCK_MODEL_IDS",
-        "us.anthropic.claude-opus-4-6-v1,us.anthropic.claude-sonnet-4-6",
+        "us.anthropic.claude-opus-4-6-v1,us.anthropic.claude-sonnet-4-6,global.anthropic.claude-opus-4-5-20251101-v1:0",
     ).split(",")
     if m.strip()
 ]
