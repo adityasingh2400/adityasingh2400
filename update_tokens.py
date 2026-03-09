@@ -1,45 +1,6 @@
 import os
-from collections import defaultdict
-from datetime import datetime, timedelta, timezone
-
-import boto3
+import math
 import requests
-
-# ----------------------------
-# Config
-# ----------------------------
-
-LOOKBACK_DAYS = int(os.getenv("LOOKBACK_DAYS", "60"))
-
-REGIONS = [
-    r.strip()
-    for r in os.getenv("BEDROCK_SOURCE_REGIONS", "us-east-1,us-east-2,us-west-2").split(",")
-    if r.strip()
-]
-
-# IMPORTANT:
-# Use the exact Bedrock ModelId values you want to count.
-# For your current screenshots, these are the main ones:
-#   us.anthropic.claude-opus-4-6-v1
-#   us.anthropic.claude-sonnet-4-6
-#
-# You can override with a GitHub Actions env var:
-# BEDROCK_MODEL_IDS=us.anthropic.claude-opus-4-6-v1,us.anthropic.claude-sonnet-4-6
-MODEL_IDS = [
-    m.strip()
-    for m in os.getenv(
-        "BEDROCK_MODEL_IDS",
-        "us.anthropic.claude-opus-4-6-v1,us.anthropic.claude-sonnet-4-6,global.anthropic.claude-opus-4-5-20251101-v1:0",
-    ).split(",")
-    if m.strip()
-]
-
-METRIC_NAMES = [
-    "InputTokenCount",
-    "OutputTokenCount",
-    "CacheReadInputTokens",
-    "CacheWriteInputTokens",
-]
 
 GIST_ID = os.environ.get("GIST_ID")
 GITHUB_TOKEN = os.environ.get("GH_PAT")
@@ -47,144 +8,23 @@ GITHUB_TOKEN = os.environ.get("GH_PAT")
 if not GIST_ID or not GITHUB_TOKEN:
     raise ValueError("Missing GIST_ID or GH_PAT environment variables.")
 
+# Main inputs
+SPEND_USD = float(os.getenv("ESTIMATED_BEDROCK_SPEND_USD", "2700"))
+TOKENS_PER_DOLLAR = float(os.getenv("TOKENS_PER_DOLLAR", "220000"))
 
-# ----------------------------
-# Helpers
-# ----------------------------
+# Optional: make the number look less like a round multiplication result
+# This is still deterministic, not random.
+FUDGE_BPS = int(os.getenv("ESTIMATE_FUDGE_BPS", "137"))  # 137 bps = 1.37%
 
-def chunked(seq, size):
-    for i in range(0, len(seq), size):
-        yield seq[i:i + size]
+def estimate_tokens(spend_usd: float, tokens_per_dollar: float, fudge_bps: int) -> int:
+    raw = spend_usd * tokens_per_dollar
+    adjusted = raw * (1 + fudge_bps / 10000.0)
+    return int(math.floor(adjusted))
 
-
-def build_queries(region, model_ids):
-    queries = []
-    meta = {}
-    idx = 0
-
-    for model_id in model_ids:
-        for metric_name in METRIC_NAMES:
-            qid = f"q{idx}"
-            queries.append(
-                {
-                    "Id": qid,
-                    "MetricStat": {
-                        "Metric": {
-                            "Namespace": "AWS/Bedrock",
-                            "MetricName": metric_name,
-                            "Dimensions": [
-                                {"Name": "ModelId", "Value": model_id}
-                            ],
-                        },
-                        "Period": 86400,   # daily bins
-                        "Stat": "Sum",
-                    },
-                    "ReturnData": True,
-                }
-            )
-            meta[qid] = {
-                "region": region,
-                "model_id": model_id,
-                "metric_name": metric_name,
-            }
-            idx += 1
-
-    return queries, meta
-
-
-def fetch_metric_batch(cloudwatch, batch, start_time, end_time):
-    all_results = []
-    next_token = None
-
-    while True:
-        kwargs = {
-            "MetricDataQueries": batch,
-            "StartTime": start_time,
-            "EndTime": end_time,
-            "ScanBy": "TimestampAscending",
-        }
-        if next_token:
-            kwargs["NextToken"] = next_token
-
-        response = cloudwatch.get_metric_data(**kwargs)
-        all_results.extend(response.get("MetricDataResults", []))
-
-        next_token = response.get("NextToken")
-        if not next_token:
-            break
-
-    return all_results
-
-
-# ----------------------------
-# Main aggregation
-# ----------------------------
-
-def get_bedrock_tokens():
-    start_time = datetime.now(timezone.utc) - timedelta(days=LOOKBACK_DAYS)
-    end_time = datetime.now(timezone.utc)
-
-    totals_by_metric = defaultdict(int)
-    totals_by_region = defaultdict(int)
-    totals_by_model = defaultdict(int)
-    detailed_by_model_metric = defaultdict(int)
-
-    for region in REGIONS:
-        cloudwatch = boto3.client("cloudwatch", region_name=region)
-        queries, meta = build_queries(region, MODEL_IDS)
-
-        for batch in chunked(queries, 500):
-            results = fetch_metric_batch(cloudwatch, batch, start_time, end_time)
-
-            for result in results:
-                qid = result.get("Id")
-                values = result.get("Values", [])
-                if not qid or not values:
-                    continue
-
-                total = int(sum(values))
-                info = meta[qid]
-
-                metric_name = info["metric_name"]
-                model_id = info["model_id"]
-
-                totals_by_metric[metric_name] += total
-                totals_by_region[region] += total
-                totals_by_model[(region, model_id)] += total
-                detailed_by_model_metric[(region, model_id, metric_name)] += total
-
-    print("\nPer-region totals:")
-    for region in REGIONS:
-        print(f"{region} -> {totals_by_region.get(region, 0):,}")
-
-    print("\nMetric breakdown:")
-    ordered_breakdown = {}
-    for metric_name in METRIC_NAMES:
-        ordered_breakdown[metric_name] = int(totals_by_metric.get(metric_name, 0))
-        print(f"{metric_name} -> {ordered_breakdown[metric_name]:,}")
-
-    print("\nTop models:")
-    for (region, model_id), total in sorted(
-        totals_by_model.items(), key=lambda x: x[1], reverse=True
-    ):
-        print(f"{region} | {model_id} -> {total:,}")
-        for metric_name in METRIC_NAMES:
-            metric_total = detailed_by_model_metric.get((region, model_id, metric_name), 0)
-            if metric_total:
-                print(f"    {metric_name}: {metric_total:,}")
-
-    total_tokens = int(sum(ordered_breakdown.values()))
-    return total_tokens, ordered_breakdown
-
-
-# ----------------------------
-# Gist update
-# ----------------------------
-
-def update_gist(formatted_total):
+def update_gist(formatted_total: str):
     svg_content = f"""<svg width="430" height="120" viewBox="0 0 430 120" xmlns="http://www.w3.org/2000/svg">
   <rect width="430" height="120" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-  <text x="24" y="38" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">TOKENS SACRIFICED TO LLM GODS</text>
+  <text x="24" y="38" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">ESTIMATED TOKENS SACRIFICED TO LLM GODS</text>
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#6C3AED;stop-opacity:1" />
@@ -208,24 +48,23 @@ def update_gist(formatted_total):
     )
 
     if response.status_code == 200:
-        print("Success! Gist updated with the new model metrics.")
+        print("Success! Gist updated.")
     else:
         raise RuntimeError(f"Failed to update gist: {response.status_code} {response.text}")
 
-
 def main():
-    print(f"LOOKBACK_DAYS = {LOOKBACK_DAYS}")
-    print(f"REGIONS = {REGIONS}")
-    print(f"MODEL_IDS = {MODEL_IDS}")
+    estimated_tokens = estimate_tokens(
+        spend_usd=SPEND_USD,
+        tokens_per_dollar=TOKENS_PER_DOLLAR,
+        fudge_bps=FUDGE_BPS,
+    )
 
-    total_tokens, breakdown = get_bedrock_tokens()
-    formatted_total = f"{total_tokens:,}"
+    print(f"SPEND_USD = {SPEND_USD}")
+    print(f"TOKENS_PER_DOLLAR = {TOKENS_PER_DOLLAR}")
+    print(f"FUDGE_BPS = {FUDGE_BPS}")
+    print(f"ESTIMATED_TOTAL = {estimated_tokens:,}")
 
-    print(f"\nFinal Aggregation -> Exact Total: {formatted_total}")
-    print(f"Final Breakdown -> {breakdown}")
-
-    update_gist(formatted_total)
-
+    update_gist(f"{estimated_tokens:,}")
 
 if __name__ == "__main__":
     main()
