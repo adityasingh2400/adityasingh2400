@@ -45,7 +45,7 @@ Curious about my motivations or have questions about any of my projects? I train
 
 <div align="center">
 
-I use `Cursor` for UI and UX work, visual flow, and anything where it helps to watch something work visually. I use `Claude Code` for the heavy lifting and most of the serious implementation. I also cycle between `Cursor`,`Codex`, and `Antigravity` student plans to save cost on tokens and not waste thousands of dollars every month. Lastly I use `Oh My OpenCode` to act as a agent harness letting me efficeintly use multiple indiviudal agents as once in a swarm style
+I use `Cursor` for UI and UX work, visual flow, and anything where it helps to watch something work visually. I use `Claude Code` for the heavy lifting and most of the serious implementation. I also cycle between `Cursor`,`Codex`, and `Antigravity` student plans to save cost on tokens and not waste thousands of dollars every month. Lastly I use `Oh My OpenCode` to act as an agent harness letting me efficiently use multiple individual agents at once in a swarm style.
 
 </div>
 
