@@ -43,7 +43,7 @@ Right now I'm deep into using AI to automate as much of my own life as possible 
 
 <div align="center">
 
-I use `Cursor` for UI and UX work, visual flow, and anything where it helps to click around, inspect fast, and watch everything happen live. I use `Claude Code` for the heavy lifting, where I do deeper repo work, bigger edits, harder debugging, and most of the serious implementation. I also use `Oh My OpenCode` to keep the workflow more structured with specialized agents, cleaner task flow, and tighter verification when I am building fast.
+I use `Cursor` for UI and UX work, visual flow, and anything where it helps to watch something work visually. I use `Claude Code` for the heavy lifting and most of the serious implementation. I also cycle between `Cursor`,`Codex`, and `Antigravity` student plans to save cost on tokens and not waste thousands of dollars every month. Lastly I use `Oh My OpenCode` to act as a agent harness letting me efficeintly use multiple indiviudal agents as once in a swarm style
 
 </div>
 
