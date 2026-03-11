@@ -21,6 +21,8 @@ Background in robotics (co-founded a nonprofit, built competition bots, wrote CV
 
 Right now I'm deep into using AI to automate as much of my own life as possible and pushing agentic coding tools to their limit. Most of what I build and ship these days has an AI somewhere in the loop.
 
+Curious about my motivations or have questions about any of my projects? I trained a voice agent on all my data, interests, and hobbies — head to [my website](https://adityasingh2400-nu.vercel.app/) and have a full conversation with it.
+
 ## Stack
 
 <div align="center">
