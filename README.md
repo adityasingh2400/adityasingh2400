@@ -12,7 +12,9 @@ Building systems that think, ship, and scale.
 <a href="https://x.com/NoeticPraxis"><img src="https://cdn.simpleicons.org/x/e6edf3" width="32" height="32" alt="X"/></a>&nbsp;
 <a href="https://github.com/adityasingh2400"><img src="https://cdn.simpleicons.org/github/e6edf3" width="32" height="32" alt="GitHub"/></a>
 </div>
+<br>
 
+🏆 Won Best Sustainability Track @ CSULB BeachHacks 2026. Many more wins coming. → [See what we built](https://devpost.com/software/reroute-1kwb08)
 ---
 
 CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and more—think a 10x better Alexa that anyone can own for free.
@@ -21,7 +23,7 @@ Background in robotics (co-founded a nonprofit, built competition bots, wrote CV
 
 Right now I'm deep into using AI to automate as much of my own life as possible and pushing agentic coding tools to their limit. Most of what I build and ship these days has an AI somewhere in the loop.
 
-Curious about my motivations or have questions about any of my projects? I trained a voice agent on all my data, interests, and hobbies — head to [my website](https://adityasingh2400-nu.vercel.app/) and have a full conversation with it.
+Curious about my motivations or have questions about any of my projects? I trained a voice agent on all my data, interests, and hobbies — head to [my website](https://adityasingh.dev/) and have a full conversation with it.
 
 ## Stack
 
