@@ -14,7 +14,13 @@ Building systems that think, ship, and scale.
 </div>
 <br>
 
+## 🎖️ Recent Awards
+- **🏆 1st Place Best AI/ML — SD Hacks 2026**
+- **🏆 1st Place Best Sustainability Track — CSULB BeachHacks 2026**
+
 ---
+
+
 
 CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and more—think a 10x better Alexa that anyone can own for free.
 
