@@ -26,8 +26,6 @@ CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales co
 
 Background in robotics (co-founded a nonprofit, built competition bots, wrote CV pipelines) and ML research at Cambridge. Published at IEEE MIT URTC.
 
-Right now I'm deep into using AI to automate as much of my own life as possible and pushing agentic coding tools to their limit. Most of what I build and ship these days has an AI somewhere in the loop.
-
 Curious about my motivations or have questions about any of my projects? I trained a voice agent on all my data, interests, and hobbies — head to [my website](https://adityasingh.dev/) and have a full conversation with it.
 
 ## Stack
