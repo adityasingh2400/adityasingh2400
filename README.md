@@ -7,10 +7,12 @@ Building systems that think, ship, and scale.
 [![UCSB](https://img.shields.io/badge/CS_@_UC_Santa_Barbara-003660?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAzTDEgOWwxMSA2IDktNS0xVjE3aDJWOS4yN0wyMyA5bC0xMS02ek01IDE1LjE4VjE4bDcgMy44OSA3LTMuODl2LTIuODJsLTcgMy44OS03LTMuODl6Ii8+PC9zdmc+&logoColor=white)](https://news.ucsb.edu/2026/022373/ucsb-among-worlds-most-influential-research-universities-science-impact)
 [![Ryft](https://img.shields.io/badge/SWE_Lead_@_Ryft_AI-6C3AED?style=for-the-badge&logo=lightning&logoColor=white)](https://ryft.cloud)
 
-<a href="mailto:adityasingh@ucsb.edu"><img src="https://img.icons8.com/color/48/gmail-new.png" width="32" height="32" alt="Email"/></a>&nbsp;
-<a href="https://www.linkedin.com/in/adityasingh2400"><img src="https://img.icons8.com/color/48/linkedin.png" width="32" height="32" alt="LinkedIn"/></a>&nbsp;
-<a href="https://x.com/NoeticPraxis"><img src="https://cdn.simpleicons.org/x/e6edf3" width="32" height="32" alt="X"/></a>&nbsp;
-<a href="https://github.com/adityasingh2400"><img src="https://cdn.simpleicons.org/github/e6edf3" width="32" height="32" alt="GitHub"/></a>
+<p align="center">
+  <a href="mailto:adityasingh@ucsb.edu"><img src="https://img.icons8.com/color/48/gmail-new.png" width="32" alt="Email"/></a>
+  <a href="https://www.linkedin.com/in/adityasingh2400"><img src="https://img.icons8.com/color/48/linkedin.png" width="32" alt="LinkedIn"/></a>
+  <a href="https://x.com/NoeticPraxis"><img src="https://cdn.simpleicons.org/x/e6edf3" width="32" alt="X"/></a>
+  <a href="https://github.com/adityasingh2400"><img src="https://cdn.simpleicons.org/github/e6edf3" width="32" alt="GitHub"/></a>
+</p>
 </div>
 <br>
 
