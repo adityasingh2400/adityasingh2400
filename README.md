@@ -59,7 +59,7 @@ I use `Cursor` for UI and UX work, visual flow, and anything where it helps to w
 <br>
 
 ### LLM Compute Scale
-<img src="./tokens.svg" width="430" alt="Estimated tokens sacrificed to LLM gods: 8,746,340,000" />
+<img src="./tokens.svg" width="430" alt="Estimated token spend: 8,746,340,000" />
 
 <br>
 

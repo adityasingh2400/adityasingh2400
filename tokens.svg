@@ -1,6 +1,6 @@
 <svg width="430" height="120" viewBox="0 0 430 120" xmlns="http://www.w3.org/2000/svg">
   <rect width="430" height="120" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-  <text x="24" y="38" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">ESTIMATED TOKENS SACRIFICED TO LLM GODS</text>
+  <text x="24" y="38" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8b949e">ESTIMATED TOKEN SPEND</text>
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#6C3AED"/>
