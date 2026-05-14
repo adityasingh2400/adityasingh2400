@@ -2,7 +2,7 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:161b22,100:0d1117&height=120&section=header" width="100%" />
 
 # Hi, I'm Aditya <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="35">
-Building systems that think, ship, and scale.
+High Cortisol High Agency.
 
 [![UCSB](https://img.shields.io/badge/CS_@_UC_Santa_Barbara-003660?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAzTDEgOWwxMSA2IDktNS0xVjE3aDJWOS4yN0wyMyA5bC0xMS02ek01IDE1LjE4VjE4bDcgMy44OSA3LTMuODl2LTIuODJsLTcgMy44OS03LTMuODl6Ii8+PC9zdmc+&logoColor=white)](https://news.ucsb.edu/2026/022373/ucsb-among-worlds-most-influential-research-universities-science-impact)
 [![Ryft](https://img.shields.io/badge/SWE_Lead_@_Ryft_AI-6C3AED?style=for-the-badge&logo=lightning&logoColor=white)](https://ryft.cloud)
