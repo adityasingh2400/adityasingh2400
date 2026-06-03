@@ -17,6 +17,7 @@ High Cortisol High Agency.
 <br>
 
 ## 🎖️ Recent Awards
+- **🏆 Finalist & Winner - Stanford x Google x Redbull GDG Hackathon**
 - **🏆 1st Place Best AI/ML — SD Hacks 2026**
 - **🏆 1st Place Best Sustainability Track — CSULB BeachHacks 2026**
 
