@@ -2,10 +2,8 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:161b22,100:0d1117&height=120&section=header" width="100%" />
 
 # Hi, I'm Aditya <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="35">
-High Cortisol High Agency.
 
 [![UCSB](https://img.shields.io/badge/CS_@_UC_Santa_Barbara-003660?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAzTDEgOWwxMSA2IDktNS0xVjE3aDJWOS4yN0wyMyA5bC0xMS02ek01IDE1LjE4VjE4bDcgMy44OSA3LTMuODl2LTIuODJsLTcgMy44OS03LTMuODl6Ii8+PC9zdmc+&logoColor=white)](https://news.ucsb.edu/2026/022373/ucsb-among-worlds-most-influential-research-universities-science-impact)
-[![Ryft](https://img.shields.io/badge/SWE_Lead_@_Ryft_AI-6C3AED?style=for-the-badge&logo=lightning&logoColor=white)](https://ryft.cloud)
 
 <p align="center">
   <a href="mailto:adityasingh@ucsb.edu"><img src="https://img.icons8.com/color/48/gmail-new.png" width="32" alt="Email"/></a>
@@ -25,11 +23,9 @@ High Cortisol High Agency.
 
 
 
-CS at UCSB. SWE Lead at **Ryft AI**, where I build full stack infra for sales compensation automation. Also building **Ziri**, a fully automated voice OS that handles music, calendar, general questions, weather, and more—think a 10x better Alexa that anyone can own for free.
-
+CS at UCSB.
 Background in robotics (co-founded a nonprofit, built competition bots, wrote CV pipelines) and ML research at Cambridge. Published at IEEE MIT URTC.
-
-Curious about my motivations or have questions about any of my projects? I trained a voice agent on all my data, interests, and hobbies — head to [my website](https://adityasingh.dev/) and have a full conversation with it.
+Curious about my motivations or have questions about any of my projects? I trained a voice agent on all my data, interests, and hobbies. Head to [my website](https://adityasingh.dev/) and have a full conversation with it.
 
 ## Stack
 
@@ -49,11 +45,11 @@ Curious about my motivations or have questions about any of my projects? I train
 
 <br>
 
-### Vibecoding Setup
+### Agentic IDE setup
 
 <div align="center">
 
-I use `Cursor` for UI and UX work, visual flow, and anything where it helps to watch something work visually. I use `Claude Code` for the heavy lifting and most of the serious implementation. I also cycle between `Cursor`,`Codex`, and `Antigravity` student plans to save cost on tokens and not waste thousands of dollars every month. Lastly I use `Oh My OpenCode` to act as an agent harness letting me efficiently use multiple individual agents at once in a swarm style.
+`Cursor` for UI/UX work, visual flow. `Claude Code` for heavy lifting and most serious implementation. `Codex` for PR reviews and audit. I also cycle between `Cursor`,`Codex`, and `Antigravity` student plans to save cost on tokens and not waste thousands of dollars every month. Lastly I use `Oh My OpenCode` to act as an agent harness letting me efficiently orchestrate 100+ agents concurrently.
 
 </div>
 
